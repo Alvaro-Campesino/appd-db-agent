@@ -1,0 +1,9 @@
+apiVersion: v2
+appVersion: "22.3.0"
+deprecated: false
+description: A chart for deploying the APPDynamics Database Agent in K8s
+name: appd-db-agent
+sources:
+  - https://github.com/Alvaro-Campesino/appd-db-agent
+type: application
+version: 0.1.0

@@ -1,0 +1,17 @@
+{{- if and .Values.volume.enabled (not .Values.volume.existingClaim) }}
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "appdynamics-db-agent.fullname" . }}-pvc
+  labels:
+    {{- include "appdynamics-db-agent.labels" . | nindent 4 }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.volume.size | quote }}
+  {{- with .Values.volume.storageClassName }}
+  storageClassName: {{ . }}
+  {{- end }}
+  {{- end -}}
