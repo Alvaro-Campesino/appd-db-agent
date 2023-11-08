@@ -9,13 +9,13 @@ kubectl get pods
 
 Check in the logs that your pod is authenticating properly with the controller:
 
-kubectl logs  deploy/{{ include "appdynamics-db-agent.fullname" }}
+kubectl logs  deploy/{{ include "appdynamics-db-agent.fullname" . }}
 
 
 
 You can check connectivity from within the pod to the controller by running the following command:
 
-kubectl exec -it -n NAMESPACE deploy/{{ include "appdynamics-db-agent.fullname" }} -- nc -vw5  {{ .Values.properties.appdControllerHostname }} {{ .Values.properties.appdControllerPort }}
+kubectl exec -it -n NAMESPACE deploy/{{ include "appdynamics-db-agent.fullname" . }} -- nc -vw5  {{ .Values.properties.appdControllerHostname }} {{ .Values.properties.appdControllerPort }}
 
 
 

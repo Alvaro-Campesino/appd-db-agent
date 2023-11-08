@@ -5,51 +5,59 @@
 
 # -- Configure the main properties for the agent
 properties:
+  # -- The 'AppDynamices Agent Account Name' used for connecting to the controller
   appdAgentAccountName: ""
+  # -- The AppDynamices Agent Controller Hostname
+  appdAgentAccountAccessKey:
+    # -- Name of the secret to use, this will be used instead of the 'accessKeyValue' the secret key must be APPDYNAMICS_AGENT_ACCOUNT_ACCESS_KEY
+    existingSecretName: ""
+    # -- The key linked to the 'AppDynamices Agent Account Name' used to generate a secret
+    accessKeyValue: ""
   appdControllerHostname: ""
+  # -- The AppDynamices Agent Controller Port
   appdControllerPort: "443"
+  # -- If the AppDynamices Agent Controller is using SSL
   appdControllerSslEnabled: "true"
+  # -- The Database Agent Name to be used, it will be displayed in the controller for choosing the agent.
   appdDatabaseAgentName: "K8s-DB-Agent"
+
+
+
 
 
 # -- Configure the image
 image:
   repository: appdynamics/db-agent
-  # Overrides the image tag whose default is the chart appVersion.
+  # -- Overrides the image tag whose default is the chart appVersion.
   tag: 22.3.0
   pullPolicy: IfNotPresent
 
+# -- Configure the imagePullSecrets
 imagePullSecrets: []
+
+# -- Set the number of replicas
 replicas: 1
 
-# If you want to override de deployment or chart name, currently: "appdynamics-db-agent"
+# -- If you want to override de deployment or chart name, currently: "appdynamics-db-agent"
 nameOverride: ""
 fullnameOverride: ""
 
+# -- Configure the service account creation
 serviceAccount:
-  # Specifies whether a service account should be created
+  # -- Specifies whether a service account should be created
   create: false
-  # Annotations to add to the service account
+  # --  Annotations to add to the service account
   annotations: {}
-  # The name of the service account to use.
+  # -- The name of the service account to use.
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-
-
-podAnnotations: {}
-podLabels:
-  {}
-# app: appdynamics-db-agent
-podEnv:
-  # a default port must be set. required by container
-  - name: "UPTIME_KUMA_PORT"
-    value: "3001"
-
+# -- Define a podSecurityContext
 podSecurityContext:
   {}
 # fsGroup: 2000
 
+# -- Define a SecurityContext for the Deployment
 securityContext:
   {}
   # capabilities:
@@ -59,7 +67,7 @@ securityContext:
   # runAsNonRoot: true
 # runAsUser: 1000
 
-
+# -- Define custom resources
 resources:
   {}
   # Adjust them as necessary, and remove the curly braces after 'resources:'.
@@ -70,60 +78,26 @@ resources:
   #   cpu: 100m
 #   memory: 128Mi
 
+# -- Configure the nodeSelector features
 nodeSelector: {}
 
+# -- Configure the pod labels
+podLabels: {}
+
+# -- Configure the pod annotations
+podAnnotations: {}
+
+# -- Configure tolerations
 tolerations: []
 
+# -- Configure affinity
 affinity: {}
 
-livenessProbe:
-  enabled: true
-  timeoutSeconds: 2
-  initialDelaySeconds: 15
-
-readinessProbe:
-  enabled: true
-  initialDelaySeconds: 5
-
-logs:
-  ##
-  persistance:
-    # If you want to store logs in a persistent storage set this to tru
-    enabled: false
-    # If you want to use a storage class other than the default, uncomment this
-    # line and define the storage class name
-    # storageClass:
-    # Reuse your own pre-existing PVC.
-    existingClaim: ""
-
-volume:
-  enabled: true
-  accessMode: ReadWriteOnce
-  size: 4Gi
-  # If you want to use a storage class other than the default, uncomment this
-  # line and define the storage class name
-  # storageClassName:
-  # Reuse your own pre-existing PVC.
-  existingClaim: ""
-
+# -- Configure the restartPolicy
 restartPolicy: Always
-dnsPolicy: ClusterFirst
-# -- A list of additional volumes to be added to the pod
-additionalVolumes:
-  []
-  # - name: "additional-certificates"
-  #   configMap:
-  #     name: "additional-certificates"
-  #     optional: true
-#     defaultMode: 420
 
-# -- A list of additional volumeMounts to be added to the pod
-additionalVolumeMounts:
-  []
-  # - name: "additional-certificates"
-  #   mountPath: "/etc/ssl/certs/additional/additional-ca.pem"
-  #   readOnly: true
-#   subPath: "additional-ca.pem"
+# -- Configure the dnsPolicy
+dnsPolicy: ClusterFirst
 
 strategy:
   rollingUpdate:
@@ -131,44 +105,31 @@ strategy:
     maxUnavailable: 25%
   type: RollingUpdate
 
-# Prometheus ServiceMonitor configuration
-serviceMonitor:
-  enabled: false
-  # -- Scrape interval. If not set, the Prometheus default scrape interval is used.
-  interval: 60s
-  # -- Timeout if metrics can't be retrieved in given time interval
-  scrapeTimeout: 10s
-  # -- Scheme to use when scraping, e.g. http (default) or https.
-  scheme: ~
-  # -- TLS configuration to use when scraping, only applicable for scheme https.
-  tlsConfig: {}
-  # -- Prometheus [RelabelConfigs] to apply to samples before scraping
-  relabelings: []
-  # -- Prometheus [MetricRelabelConfigs] to apply to samples before ingestion
-  metricRelabelings: []
-  # -- Prometheus ServiceMonitor selector, only select Prometheus's with these
-  # labels (if not set, select any Prometheus)
-  selector: {}
 
-  # -- Namespace where the ServiceMonitor resource should be created, default is
-  # the same as the release namespace
-  namespace: ~
-  # -- Additional labels to add to the ServiceMonitor
-  additionalLabels: {}
-  # -- Additional annotations to add to the ServiceMonitor
-  annotations: {}
-
-  # -- BasicAuth credentials for scraping metrics, use API token and any string for username
-  # basicAuth:
-  #   username: "metrics"
-  #   password: ""
-
-# -- Use this option to set a custom DNS policy to the created deployment
-dnsPolicy: ""
-
-# -- Use this option to set custom DNS configurations to the created deployment
-dnsConfig: {}
-
-# -- Configure your the log level of the agent
-log:
+logs:
+  # -- Configure the log level of the agent
   level: "info"
+  persistance:
+    # If you want to store logs in a persistent storage set this to tru
+    #-- Configure a volume for logs persistance
+    enabled: false
+    # If you want to use a storage class other than the default, uncomment this
+    # line and define the storage class name
+
+    storageClass:
+    # Reuse your own pre-existing PVC.
+    # -- Your logs ExistingClaim if present
+    existingClaim: ""
+
+volume:
+  # -- Configure a volume for logs persistance
+  enabled: true
+  # -- Configure a volume accessMode
+  accessMode: ReadWriteOnce
+  # -- Define the voluem size
+  size: 1Gi
+  # If you want to use a storage class other than the default, uncomment this
+  # line and define the storage class name
+  storageClassName: ""
+  # Reuse your own pre-existing PVC.
+  existingClaim: ""

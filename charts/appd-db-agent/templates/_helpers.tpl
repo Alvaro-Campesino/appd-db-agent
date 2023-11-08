@@ -31,6 +31,14 @@ Create chart name and version as used by the chart label.
 {{- end }}
 
 {{/*
+Selector labels
+*/}}
+{{- define "appdynamics-db-agent.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "appdynamics-db-agent.name" . }}
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
 Common labels
 */}}
 {{- define "appdynamics-db-agent.labels" -}}
@@ -49,7 +57,7 @@ Create the name of the service account to use
 */}}
 {{- define "appdynamics-db-agent.serviceAccountName" -}}
 {{- if .Values.serviceAccount.create }}
-{{- default (include "appdynamics-db-agent.fullname" .) .Values.serviceAccount.name }}
+{{- default (include "appdynamics-db-agent.fullname" . ) .Values.serviceAccount.name }}
 {{- else }}
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
